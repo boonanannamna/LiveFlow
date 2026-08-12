@@ -44,8 +44,16 @@ export function UpdateGate({ children }: { children: ReactNode }) {
       })
       .catch((error) => {
         if (cancelled) return;
+        const details = String(error);
+        // The very first installer must remain usable before the repository has
+        // its initial GitHub Release. Once latest.json exists, newer versions
+        // are still downloaded and installed before the application opens.
+        if (/404|not found/i.test(details)) {
+          setStatus("current");
+          return;
+        }
         setStatus("error");
-        setMessage(`ตรวจสอบอัปเดตไม่สำเร็จ: ${String(error)}`);
+        setMessage(`ตรวจสอบอัปเดตไม่สำเร็จ: ${details}`);
       });
 
     return () => { cancelled = true; };
