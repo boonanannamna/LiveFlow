@@ -6,9 +6,9 @@ LiveFlow เป็นโปรแกรม Windows สำหรับเชื�
 
 ## ดาวน์โหลดและติดตั้ง
 
-เปิดหน้า [Releases](https://github.com/boonanannamna/LiveFlow/releases/latest) แล้วดาวน์โหลดไฟล์:
+[⬇️ ดาวน์โหลด LiveFlow 0.1.9 สำหรับ Windows (ไฟล์ติดตั้ง .exe)](https://github.com/boonanannamna/LiveFlow/releases/download/v0.1.9/LiveFlow_0.1.9_x64-setup.exe)
 
-**`LiveFlow_0.1.9_x64-setup.exe`**
+หรือเปิดหน้า [Releases ล่าสุด](https://github.com/boonanannamna/LiveFlow/releases/latest) แล้วเลือกไฟล์ **`LiveFlow_0.1.9_x64-setup.exe`**
 
 ไฟล์นี้คือตัวติดตั้งสำหรับ Windows 64-bit และรวม TikTok LIVE connector ไว้แล้ว เครื่องผู้ใช้ไม่ต้องติดตั้ง Python แยก
 
