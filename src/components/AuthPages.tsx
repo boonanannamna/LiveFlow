@@ -273,7 +273,7 @@ function AdminUserCard({ user, currentUser, sessionToken: _sessionToken, onSaved
 export function AdminPage({ sessionToken, currentUser, onBack }: { sessionToken: string; currentUser: AuthUser; onBack: () => void }) {
   const [users, setUsers] = useState<AuthUser[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [updateInfo, setUpdateInfo] = useState<SystemUpdateInfo>({ currentVersion: "0.1.8", requiredVersion: "0.1.8", forceUpdate: false, updateUrl: "", message: "" });
+  const [updateInfo, setUpdateInfo] = useState<SystemUpdateInfo>({ currentVersion: "0.1.9", requiredVersion: "0.1.9", forceUpdate: false, updateUrl: "", message: "" });
   const [announcementForm, setAnnouncementForm] = useState({ title: "", message: "", imageUrl: "", displayMode: "banner", startsAt: "", endsAt: "" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -298,7 +298,7 @@ export function AdminPage({ sessionToken, currentUser, onBack }: { sessionToken:
       const nextUsers = (profilesResult.data || []).map((row) => profileToAuthUser(row as LiveFlowProfileRow));
       const nextAnnouncements = (announcementsResult.data || []).map((row: any) => ({ id: row.id, title: row.title, message: row.message, imageUrl: row.image_url, displayMode: row.display_mode, startsAt: row.starts_at, endsAt: row.ends_at, createdAt: row.created_at })) as Announcement[];
       const row: any = updateResult.data;
-      const nextUpdate: SystemUpdateInfo = { currentVersion: "0.1.8", requiredVersion: row.required_version, forceUpdate: row.force_update, updateUrl: row.update_url, message: row.message };
+      const nextUpdate: SystemUpdateInfo = { currentVersion: "0.1.9", requiredVersion: row.required_version, forceUpdate: row.force_update, updateUrl: row.update_url, message: row.message };
       setUsers(nextUsers); setAnnouncements(nextAnnouncements); setUpdateInfo(nextUpdate);
     } catch (loadError) { setError(String(loadError)); } finally { setLoading(false); }
   };

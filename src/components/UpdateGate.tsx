@@ -6,6 +6,8 @@ import { RefreshCw } from "lucide-react";
 
 type UpdateStatus = "checking" | "current" | "downloading" | "installing" | "error";
 
+const UPDATE_CHECK_RETRIES = 2;
+
 export function UpdateGate({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<UpdateStatus>(isTauri() ? "checking" : "current");
   const [version, setVersion] = useState("");
@@ -34,7 +36,23 @@ export function UpdateGate({ children }: { children: ReactNode }) {
       }
     };
 
-    void check({ timeout: 20_000 })
+    const checkForUpdate = async () => {
+      let lastError: unknown;
+      for (let attempt = 0; attempt <= UPDATE_CHECK_RETRIES; attempt += 1) {
+        try {
+          return await check({ timeout: 20_000 });
+        } catch (error) {
+          lastError = error;
+          if (attempt < UPDATE_CHECK_RETRIES) {
+            setMessage(`เชื่อมต่อ GitHub ไม่สำเร็จ กำลังลองใหม่ (${attempt + 1}/${UPDATE_CHECK_RETRIES})...`);
+            await new Promise((resolve) => window.setTimeout(resolve, 1_500));
+          }
+        }
+      }
+      throw lastError;
+    };
+
+    void checkForUpdate()
       .then(async (update) => {
         if (cancelled) { await update?.close(); return; }
         if (!update) { setStatus("current"); return; }
@@ -69,7 +87,7 @@ export function UpdateGate({ children }: { children: ReactNode }) {
         <h1>{status === "error" ? "ไม่สามารถตรวจสอบอัปเดตได้" : version ? `กำลังอัปเดตเป็น ${version}` : "กำลังตรวจสอบอัปเดต"}</h1>
         <p>{message}</p>
         {(status === "downloading" || status === "installing") && <div className="update-progress"><span style={{ width: `${progress}%` }} /></div>}
-        {status === "error" && <button onClick={() => window.location.reload()}>ลองตรวจสอบอีกครั้ง</button>}
+        {status === "error" && <div className="update-error-actions"><button onClick={() => window.location.reload()}>ลองตรวจสอบอีกครั้ง</button><button className="ghost-btn" onClick={() => setStatus("current")}>เข้าใช้งานชั่วคราว</button></div>}
         <small>LiveFlow จะตรวจสอบลายเซ็นดิจิทัลก่อนติดตั้งทุกครั้ง</small>
       </section>
     </main>

@@ -1,6 +1,6 @@
 [package]
 name = "liveflow"
-version = "0.1.8"
+version = "0.1.9"
 description = "LiveFlow TikTok LIVE desktop app"
 authors = ["LiveFlow"]
 edition = "2021"

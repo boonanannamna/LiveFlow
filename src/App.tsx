@@ -443,7 +443,7 @@ function App() {
         if (updateResult.error) throw updateResult.error;
         const nextAnnouncements = (announcementResult.data || []).map((row: any) => ({ id: row.id, title: row.title, message: row.message, imageUrl: row.image_url, displayMode: row.display_mode, startsAt: row.starts_at, endsAt: row.ends_at, createdAt: row.created_at })) as Announcement[];
         const updateRow: any = updateResult.data;
-        const nextUpdate: SystemUpdateInfo = { currentVersion: "0.1.8", requiredVersion: updateRow.required_version, forceUpdate: updateRow.force_update, updateUrl: updateRow.update_url, message: updateRow.message };
+        const nextUpdate: SystemUpdateInfo = { currentVersion: "0.1.9", requiredVersion: updateRow.required_version, forceUpdate: updateRow.force_update, updateUrl: updateRow.update_url, message: updateRow.message };
         if (!cancelled) { setAnnouncements(nextAnnouncements); setSystemUpdate(nextUpdate); }
       } catch { /* retain the last successfully loaded system message */ }
     };
