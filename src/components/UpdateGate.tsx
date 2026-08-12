@@ -1,0 +1,69 @@
+import { useEffect, useState, type ReactNode } from "react";
+import { isTauri } from "@tauri-apps/api/core";
+import { check, type DownloadEvent } from "@tauri-apps/plugin-updater";
+import { relaunch } from "@tauri-apps/plugin-process";
+import { RefreshCw } from "lucide-react";
+
+type UpdateStatus = "checking" | "current" | "downloading" | "installing" | "error";
+
+export function UpdateGate({ children }: { children: ReactNode }) {
+  const [status, setStatus] = useState<UpdateStatus>(isTauri() ? "checking" : "current");
+  const [version, setVersion] = useState("");
+  const [message, setMessage] = useState("กำลังตรวจสอบเวอร์ชันล่าสุดจาก GitHub...");
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (!isTauri()) return;
+    let cancelled = false;
+    let downloaded = 0;
+    let total = 0;
+
+    const handleProgress = (event: DownloadEvent) => {
+      if (event.event === "Started") {
+        total = event.data.contentLength ?? 0;
+        downloaded = 0;
+        setStatus("downloading");
+        setMessage("กำลังดาวน์โหลดอัปเดตที่มีลายเซ็น...");
+      } else if (event.event === "Progress") {
+        downloaded += event.data.chunkLength;
+        if (total > 0) setProgress(Math.min(100, Math.round((downloaded / total) * 100)));
+      } else if (event.event === "Finished") {
+        setProgress(100);
+        setStatus("installing");
+        setMessage("กำลังติดตั้งอัปเดต กรุณาอย่าปิดโปรแกรม...");
+      }
+    };
+
+    void check({ timeout: 20_000 })
+      .then(async (update) => {
+        if (cancelled) { await update?.close(); return; }
+        if (!update) { setStatus("current"); return; }
+        setVersion(update.version);
+        await update.downloadAndInstall(handleProgress);
+        if (!cancelled) await relaunch();
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setStatus("error");
+        setMessage(`ตรวจสอบอัปเดตไม่สำเร็จ: ${String(error)}`);
+      });
+
+    return () => { cancelled = true; };
+  }, []);
+
+  if (status === "current") return <>{children}</>;
+
+  return (
+    <main className="forced-update-screen">
+      <section>
+        <RefreshCw size={42} className={status !== "error" ? "update-spinner" : ""} />
+        <p className="eyebrow">SECURE AUTO UPDATE</p>
+        <h1>{status === "error" ? "ไม่สามารถตรวจสอบอัปเดตได้" : version ? `กำลังอัปเดตเป็น ${version}` : "กำลังตรวจสอบอัปเดต"}</h1>
+        <p>{message}</p>
+        {(status === "downloading" || status === "installing") && <div className="update-progress"><span style={{ width: `${progress}%` }} /></div>}
+        {status === "error" && <button onClick={() => window.location.reload()}>ลองตรวจสอบอีกครั้ง</button>}
+        <small>LiveFlow จะตรวจสอบลายเซ็นดิจิทัลก่อนติดตั้งทุกครั้ง</small>
+      </section>
+    </main>
+  );
+}

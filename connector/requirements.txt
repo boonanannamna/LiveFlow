@@ -1,0 +1,3 @@
+# Upstream GitHub source; this follows the latest commit when updated.
+TikTokLive @ git+https://github.com/isaackogan/TikTokLive.git
+

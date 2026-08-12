@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+src-tauri/target/
+src-tauri/gen/
+release/
+*.log
+*.key
+*.key.pub
+connector/**/.venv/
+connector/**/__pycache__/
+connector/**/*.pyc
+connector/**/build/
+connector/**/dist/
+connector/**/.pyinstaller-build/
+.DS_Store

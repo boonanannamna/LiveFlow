@@ -1,0 +1,58 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "LiveFlow",
+  "version": "0.1.8",
+  "identifier": "com.liveflow.desktop",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1430",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [{
+      "title": "LiveFlow",
+      "width": 1280,
+      "height": 820,
+      "minWidth": 1000,
+      "minHeight": 700,
+      "resizable": true
+    }],
+    "security": { "csp": null }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "createUpdaterArtifacts": true,
+    "publisher": "LiveFlow Studio",
+    "copyright": "Copyright © 2026 LiveFlow Studio",
+    "category": "Utility",
+    "shortDescription": "TikTok LIVE automation and overlay tools",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ],
+    "resources": [
+      "resources/liveflow-tiktok-connector.exe"
+    ],
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser",
+        "installerHooks": "./windows/hooks.nsh"
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDYwNTkxNEMzQjFEODA1MkYKUldRdkJkaXh3eFJaWUVZckZmSm9tcW80WmVLVStEUk80SExEWjdBYysxa0VlK0dtRGhqUE5BSTEK",
+      "endpoints": [
+        "https://github.com/boonanannamna/LiveFlow/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
+  }
+}
