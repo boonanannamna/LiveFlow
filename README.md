@@ -1,58 +1,142 @@
-# LiveFlow MVP
+# LiveFlow
 
-Desktop MVP สำหรับเชื่อม TikTok LIVE เข้ากับระบบ Event และกฎการทำงาน
+LiveFlow เป็นโปรแกรม Windows สำหรับเชื่อม TikTok LIVE กับกฎอัตโนมัติ เช่น กดปุ่มคีย์บอร์ด เล่นเสียง แสดง Overlay และส่ง Webhook พร้อมหน้าติดตามแชตและกิจกรรมแบบเรียลไทม์
 
-## Stack
+> TikTokLive เป็นไลบรารี third-party ที่ไม่ได้เป็น API ทางการของ TikTok การเปลี่ยนแปลงฝั่ง TikTok อาจทำให้การเชื่อมต่อหยุดทำงานชั่วคราวได้
 
-- React + TypeScript
-- Vite
-- Tauri 2 + Rust
-- Neon PostgreSQL ผ่าน Rust backend
-- Gift assets จาก `C:\Users\master\Documents\Codex\TikLIVE\TikLIVE\wwwroot\images\gifts`
+## ดาวน์โหลดและติดตั้ง
 
-## เปิดแบบเว็บสำหรับดู UI
+เปิดหน้า [Releases](https://github.com/boonanannamna/LiveFlow/releases/latest) แล้วดาวน์โหลดไฟล์:
 
-```powershell
-npm install
-npm run dev
-```
+**`LiveFlow_0.1.8_x64-setup.exe`**
 
-## เปิดแบบ Desktop
+ไฟล์นี้คือตัวติดตั้งสำหรับ Windows 64-bit และรวม TikTok LIVE connector ไว้แล้ว เครื่องผู้ใช้ไม่ต้องติดตั้ง Python แยก
+
+ไฟล์อื่นใน Release:
+
+| ไฟล์ | ใช้ทำอะไร |
+|---|---|
+| `LiveFlow_0.1.8_x64-setup.exe` | ไฟล์ที่ผู้ใช้ต้องดาวน์โหลดและเปิดติดตั้ง |
+| `LiveFlow_0.1.8_x64-setup.exe.sig` | ลายเซ็นสำหรับระบบอัปเดต ไม่ต้องเปิดเอง |
+| `latest.json` | ข้อมูลเวอร์ชันสำหรับระบบอัปเดต ไม่ต้องเปิดเอง |
+
+วิธีติดตั้ง:
+
+1. ดาวน์โหลดไฟล์ `.exe` จากส่วน **Assets** ของ Release ล่าสุด
+2. ปิด LiveFlow เวอร์ชันเดิมก่อนติดตั้ง เพื่อไม่ให้ไฟล์ connector ถูกล็อก
+3. ดับเบิลคลิกไฟล์ติดตั้ง แล้วดำเนินการตามหน้าจอ
+4. เปิด LiveFlow จากไอคอนบน Desktop หรือเมนู Start
+5. สมัครสมาชิกหรือเข้าสู่ระบบ แล้วกรอก TikTok username โดยไม่จำเป็นต้องใส่ `@`
+
+หาก Windows SmartScreen แจ้งเตือน ให้ตรวจว่าดาวน์โหลดจาก repository นี้ แล้วเลือก **More info → Run anyway**
+
+## เริ่มใช้งาน TikTok LIVE
+
+1. ให้บัญชี TikTok เป้าหมายกำลัง LIVE อยู่
+2. เปิดหน้า **ภาพรวม** และกรอก username เช่น `ivklmiban`
+3. กด **เชื่อมต่อ LIVE** และรอไฟสถานะเปลี่ยนเป็น Online
+4. เปิดหน้า **การแจ้งเตือน** เพื่อตรวจสถานะ connector, แชต และ event ที่เข้ามา
+5. สร้างกฎในหน้า **กฎการทำงาน** แล้วกดทดสอบก่อนใช้งานจริง
+
+โปรแกรมรองรับ Event หลัก: ของขวัญ, ถูกใจ, ติดตาม, คอมเมนต์, แชร์ และเข้าห้อง การทำงานจริงขึ้นอยู่กับ event ที่ TikTok ส่งให้ connector ในขณะนั้น
+
+## สร้างกฎการทำงาน
+
+เลือก Event และ Gift แล้วเลือก Action ที่ต้องการ สามารถกำหนดชุดปุ่มหลายปุ่ม ทดสอบ หยุดชั่วคราว เปิดใช้งานต่อ หรือลบกฎได้
+
+![หน้าสร้างกฎและเลือกของขวัญ](docs/images/rule-builder.png)
+
+กฎที่บันทึกแล้วจะแสดงในตาราง **KEYBOARD MAPPING** เพื่อให้ตรวจสอบ Gift → Action และสถานะได้จากจุดเดียว
+
+![ตารางกฎการทำงาน](docs/images/keyboard-mapping.png)
+
+คำแนะนำ:
+
+- ทดสอบกฎด้วยปุ่ม ▶ ก่อนเริ่ม LIVE จริง
+- การกดคีย์บอร์ดต้องเปิดผ่าน Tauri Desktop ไม่ใช่หน้า preview ในเว็บ
+- เปิดโปรแกรมหรือเกมปลายทางไว้ และตรวจว่าปุ่มที่เลือกไม่ชนกับ shortcut ของ Windows
+- ถ้ากฎถูกพัก ให้กดเปิดใช้งานต่อก่อนรับ Event
+
+## Overlay สำหรับ TikTok Studio หรือ OBS
+
+หน้า **Overlay** ใช้ตั้งค่าโหลสะสม Gift, ภาพ, วิดีโอ หรือข้อความแจ้งเตือน สามารถเลือก Gift จากกฎ ปรับจำนวนสูงสุด ขนาดลูกบอล การแสดงชื่อ/Coins และรูปแบบแอนิเมชัน
+
+![หน้า Overlay Builder](docs/images/overlay-builder.png)
+
+วิธีใช้งาน:
+
+1. สร้างและบันทึกกฎ Gift ที่หน้า **กฎการทำงาน**
+2. เปิดหน้า **Overlay** แล้วเลือกรูปแบบที่ต้องการ
+3. กดทดสอบเพื่อดูผลในหน้าพรีวิว
+4. กด **สร้างลิงก์จริงสำหรับ TikTok Studio**
+5. คัดลอก URL ที่ได้ไปเพิ่มเป็น Browser Source ใน TikTok Studio หรือ OBS
+6. เปิด LiveFlow และ connector ค้างไว้ระหว่าง LIVE เพราะ Overlay รับ state จาก backend เดียวกับ Event จริง
+
+ลิงก์ `trycloudflare.com` เป็น Quick Tunnel ชั่วคราว ถ้าปิดโปรแกรมหรือ `cloudflared` ลิงก์จะหยุดทำงานและอาจต้องสร้างใหม่
+
+## แชตสดและการแจ้งเตือน
+
+หน้า **การแจ้งเตือน** แสดงขั้นตอนเชื่อมต่อ สถานะ connector ข้อผิดพลาด แชต TikTok LIVE และกิจกรรมล่าสุดแบบเรียลไทม์ ใช้ตรวจว่าระบบรับ event เข้ามาจริงหรือไม่
+
+![หน้าติดตามแชตและสถานะระบบ](docs/images/live-notifications.png)
+
+สถานะหลัก:
+
+- **Online**: connector เชื่อมต่อและพร้อมรับ event
+- **Connecting**: กำลังค้นหาห้อง LIVE หรือเชื่อม WebSocket
+- **No chat**: เชื่อมต่อแล้วแต่ยังไม่มีคอมเมนต์เข้ามา
+- **Error**: เชื่อมต่อไม่สำเร็จ ให้ตรวจ username, สถานะ LIVE และอินเทอร์เน็ต
+
+## เสียงและ Webhook
+
+- **เสียงแจ้งเตือน**: เลือกเสียงตัวอย่างหรือเพิ่มไฟล์เสียงของผู้ใช้ แล้วผูกกับ Event
+- **Webhook**: ส่ง HTTP request ไปยังบริการภายนอกเมื่อกฎทำงาน ควรใช้ URL แบบ HTTPS และทดสอบก่อน LIVE
+- ข้อมูลสำคัญ เช่น token หรือรหัสผ่าน ไม่ควรใส่ไว้ใน URL ที่เผยแพร่สาธารณะ
+
+## สมาชิก แพ็กเกจ และผู้ดูแลระบบ
+
+ผู้ใช้ดูแพ็กเกจปัจจุบันและชำระผ่าน PromptPay ได้ ส่วนผู้ดูแลระบบสามารถค้นหาสมาชิก กำหนดสิทธิ์ แพ็กเกจ วันหมดอายุ จำนวนกฎสูงสุด ระงับบัญชี และเผยแพร่ประกาศ
+
+![หน้าจัดการสมาชิกและแพ็กเกจ](docs/images/admin-members.png)
+
+ข้อมูลของผู้ใช้แยกด้วยบัญชี Neon Auth ไม่ใช้ข้อมูลร่วมกันระหว่างสมาชิก แม้ติดตั้งโปรแกรมคนละเครื่อง
+
+## ระบบอัปเดตอัตโนมัติ
+
+LiveFlow ตรวจสอบ Release ล่าสุดจาก GitHub ตอนเปิดโปรแกรม หากพบเวอร์ชันใหม่ โปรแกรมจะดาวน์โหลด ตรวจลายเซ็น ติดตั้ง และเปิดใหม่ก่อนเข้าใช้งาน
+
+เครื่องที่ใช้รุ่นเก่ากว่า `0.1.8` ต้องติดตั้ง `0.1.8` ด้วยตัวเองหนึ่งครั้ง หลังจากนั้นจึงรองรับอัปเดตอัตโนมัติ
+
+## แก้ปัญหาเบื้องต้น
+
+### เชื่อมต่อ LIVE ไม่ได้
+
+- ตรวจว่า username ถูกต้องและบัญชีกำลัง LIVE
+- ไม่ต้องใส่ URL โปรไฟล์ ให้ใส่เฉพาะ username
+- ปิดแล้วเปิด LiveFlow ใหม่ และดูรายละเอียดในหน้า **การแจ้งเตือน**
+- Firewall หรือ Antivirus ต้องอนุญาต `LiveFlow.exe` และ `liveflow-tiktok-connector.exe`
+
+### ติดตั้งทับไม่ได้
+
+ปิด LiveFlow และหน้าต่าง connector ทั้งหมดก่อนกด Retry หากยังไม่ได้ให้รีสตาร์ต Windows แล้วติดตั้งอีกครั้ง
+
+### Overlay ขึ้น 502/1033
+
+Quick Tunnel ไม่ทำงานหรือแอปถูกปิด ให้เปิด LiveFlow ใหม่แล้วสร้างลิงก์ Overlay ใหม่
+
+### กดคีย์บอร์ดไม่ทำงาน
+
+ใช้ Tauri Desktop, เปิดใช้งานกฎ, ทดสอบด้วยปุ่ม ▶ และให้หน้าต่างโปรแกรมปลายทางพร้อมรับปุ่ม หากเกมเปิดแบบ Administrator อาจต้องเปิด LiveFlow ด้วยสิทธิ์ระดับเดียวกัน
+
+## สำหรับนักพัฒนา
+
+Stack: React + TypeScript + Vite + Tauri 2/Rust + Neon PostgreSQL + TikTokLive Python sidecar
 
 ```powershell
 npm install
 npm run tauri:dev
 ```
 
-ตั้งค่า Neon โดยคัดลอก `.env.example` เป็น `.env` ในโฟลเดอร์นี้ แล้วใส่ `DATABASE_URL` ของ Neon ค่าเชื่อมต่อนี้ต้องอยู่ฝั่ง Rust เท่านั้น
+ห้าม commit `.env`, private signing key, database password, SMTP password หรือ API token ขึ้น repository
 
-## สถานะ MVP
-
-- หน้าภาพรวม LIVE
-- ช่องกรอก TikTok username
-- Event log แบบจำลอง
-- Gift selector พร้อมรูป Gift จริง 106 รายการ
-- ตัวแก้กฎ Gift → Action
-- Rust command สำหรับทดสอบการเชื่อมต่อ Neon
-- TikTok LIVE connector sidecar ที่ใช้ `isaackogan/TikTokLive` จาก GitHub
-- ส่ง Event จาก Python → Rust → React ด้วย JSON lines และ Tauri event
-- workflow ตรวจ GitHub ทุกสัปดาห์และเปิด Pull Request เมื่อมีการอัปเดต
-- Python backend เก็บไว้ที่ `connector\\Python`
-
-## TikTokLive connector
-
-ติดตั้ง connector ล่าสุด:
-
-```powershell
-py -m pip install -r connector\requirements.txt
-```
-
-หรืออัปเดตด้วย:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File connector\update_tiktoklive.ps1
-```
-
-จากนั้นเปิดแอป Tauri แล้วกรอก username ในหน้า Dashboard ระบบจะเริ่ม `connector/tiktok_connector.py` และรับ Comment, Gift, Follow และ Like เข้ามาใน Event Log
-
-หมายเหตุ: upstream ระบุว่า `TikTokLive` เป็นไลบรารี third-party แบบ reverse-engineering และไม่ใช่ production-ready API ดังนั้น workflow จะเปิด Pull Request ให้ตรวจสอบก่อนนำเวอร์ชันใหม่เข้าโปรเจกต์จริง
+รายละเอียดการออกเวอร์ชันอยู่ใน [GITHUB-UPDATE-SETUP.md](GITHUB-UPDATE-SETUP.md)
