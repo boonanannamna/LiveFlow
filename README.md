@@ -120,6 +120,10 @@ Quick Tunnel ไม่ทำงานหรือแอปถูกปิด ใ
 
 ใช้ Tauri Desktop, เปิดใช้งานกฎ, ทดสอบด้วยปุ่ม ▶ และให้หน้าต่างโปรแกรมปลายทางพร้อมรับปุ่ม หากเกมเปิดแบบ Administrator อาจต้องเปิด LiveFlow ด้วยสิทธิ์ระดับเดียวกัน
 
+## เครดิต
+
+ระบบเชื่อมต่อและรับ Event จาก TikTok LIVE ของ LiveFlow พัฒนาต่อยอดโดยใช้โปรเจกต์ [TikTokLive-master](https://github.com/boonanannamna/TikTokOverlays/tree/main/TikTokLive-master) ขอขอบคุณผู้พัฒนาและผู้มีส่วนร่วมของโครงการดังกล่าว
+
 ## สำหรับนักพัฒนา
 
 Stack: React + TypeScript + Vite + Tauri 2/Rust + Neon PostgreSQL + TikTokLive Python sidecar
